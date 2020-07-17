@@ -7,3 +7,10 @@ To check out a simple first draft of the client side portion of the app:
 - Run `yarn install` while in `client/` directory to install dependencies
 - Run `yarn serve` to spin up development server 
 - Open browser and navigate to `https://localhost:8080`
+
+Placeholder repo for Group 12's CS361 project
+
+
+High-level Architecture 
+
+![Highlevel Architecture](https://raw.githubusercontent.com/tjbanghart/purple-cobras-workout-app/master/architecture.png)
