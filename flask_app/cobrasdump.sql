@@ -139,19 +139,26 @@ INSERT INTO thread_ratings
     (user_id, thread_id, rating)
 VALUES
     (1, 1, 6),
+    (2, 1, 7),
     (2, 2, 3);
 INSERT INTO comments
     (user_id, thread_id, content)
 VALUES
     (1, 1, 'Comment 1.'),
-    (2, 2, 'Comment 2.');
+    (1, 1, 'Comment 2.'),
+    (1, 2, 'Comment 3.'),
+    (2, 2, 'Comment 4.');
 INSERT INTO videos
     (thread_id, name, link)
 VALUES
     (1, 'Video1', '/link1/'),
-    (2, 'Video2', '/link2/');
+    (1, 'Video2', '/link2/'),
+    (2, 'Video3', '/link3/'),
+    (2, 'Video4', '/link4/');
 INSERT INTO pictures
     (thread_id, name, link)
 VALUES
     (1, 'Picture1', '/link1/'),
-    (2, 'Picture2', '/link2/');
+    (1, 'Picture2', '/link2/'),
+    (2, 'Picture3', '/link3/'),
+    (2, 'Picture4', '/link4/');
