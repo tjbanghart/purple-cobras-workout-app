@@ -16,7 +16,7 @@ CREATE TABLE users (
     user_id INT NOT NULL AUTO_INCREMENT,
     birthdate DATETIME NOT NULL,
     gender VARCHAR(255) NOT NULL,
-    username VARCHAR(255) NOT NULL,
+    username VARCHAR(255) UNIQUE NOT NULL,
     PRIMARY KEY (user_id)
 );
 CREATE TABLE favorites (
@@ -27,7 +27,8 @@ CREATE TABLE favorites (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT favorited UNIQUE (user_id, workout_id)
 );
 CREATE TABLE todo (
     todo_id INT NOT NULL AUTO_INCREMENT,
@@ -37,7 +38,8 @@ CREATE TABLE todo (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT todo_item UNIQUE (user_id, workout_id)
 );
 CREATE TABLE completed (
     completed_id INT NOT NULL AUTO_INCREMENT,
@@ -47,7 +49,8 @@ CREATE TABLE completed (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT completed_wkout UNIQUE (user_id, workout_id)
 );
 CREATE TABLE workout_ratings (
     workout_rating_id INT NOT NULL AUTO_INCREMENT,
@@ -58,7 +61,8 @@ CREATE TABLE workout_ratings (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT w_rated UNIQUE (user_id, workout_id)
 );
 CREATE TABLE threads (
     thread_id INT NOT NULL AUTO_INCREMENT,
@@ -79,7 +83,8 @@ CREATE TABLE thread_ratings (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE,
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT t_rated UNIQUE (user_id, thread_id)
 );
 CREATE TABLE comments (
     comment_id INT NOT NULL AUTO_INCREMENT,
