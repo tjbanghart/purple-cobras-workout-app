@@ -24,24 +24,30 @@ CREATE TABLE favorites (
     user_id INT NOT NULL,
     workout_id INT NOT NULL,
     PRIMARY KEY (favorite_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE todo (
     todo_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     workout_id INT NOT NULL,
     PRIMARY KEY (todo_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE completed (
     completed_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     workout_id INT NOT NULL,
     PRIMARY KEY (completed_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE workout_ratings (
     workout_rating_id INT NOT NULL AUTO_INCREMENT,
@@ -49,12 +55,15 @@ CREATE TABLE workout_ratings (
     workout_id INT NOT NULL,
     rating INT NOT NULL,
     PRIMARY KEY (workout_rating_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (workout_id) REFERENCES workouts(workout_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE threads (
     thread_id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
+    datetime DATETIME NOT NULL,
     content TEXT NOT NULL,
     PRIMARY KEY (thread_id)
 );
@@ -64,17 +73,22 @@ CREATE TABLE thread_ratings (
     thread_id INT NOT NULL,
     rating INT NOT NULL,
     PRIMARY KEY (thread_rating_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE comments (
     comment_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     thread_id INT NOT NULL,
+    datetime DATETIME NOT NULL,
     content TEXT NOT NULL,
     PRIMARY KEY (comment_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE videos (
     video_id INT NOT NULL AUTO_INCREMENT,
@@ -83,6 +97,7 @@ CREATE TABLE videos (
     link VARCHAR(255) NOT NULL,
     PRIMARY KEY (video_id),
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
+        ON DELETE CASCADE
 );
 CREATE TABLE pictures (
     picture_id INT NOT NULL AUTO_INCREMENT,
@@ -91,6 +106,7 @@ CREATE TABLE pictures (
     link VARCHAR(255) NOT NULL,
     PRIMARY KEY (picture_id),
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
+        ON DELETE CASCADE
 );
 
 
@@ -131,10 +147,10 @@ VALUES
     (1, 1, 4),
     (2, 2, 7);
 INSERT INTO threads
-    (name, content)
+    (name, datetime, content)
 VALUES
-    ('Thread1', 'Thread 1 content.'),
-    ('Thread2', 'Thread 2 content.');
+    ('Thread1', '2020-02-20 20:20:20', 'Thread 1 content.'),
+    ('Thread2', '2020-02-20 20:20:20', 'Thread 2 content.');
 INSERT INTO thread_ratings
     (user_id, thread_id, rating)
 VALUES
@@ -142,12 +158,12 @@ VALUES
     (2, 1, 7),
     (2, 2, 3);
 INSERT INTO comments
-    (user_id, thread_id, content)
+    (user_id, thread_id, datetime, content)
 VALUES
-    (1, 1, 'Comment 1.'),
-    (1, 1, 'Comment 2.'),
-    (1, 2, 'Comment 3.'),
-    (2, 2, 'Comment 4.');
+    (1, 1, '2020-02-20 20:20:20', 'Comment 1.'),
+    (1, 1, '2020-02-20 20:20:20', 'Comment 2.'),
+    (1, 2, '2020-02-20 20:20:20', 'Comment 3.'),
+    (2, 2, '2020-02-20 20:20:20', 'Comment 4.');
 INSERT INTO videos
     (thread_id, name, link)
 VALUES
