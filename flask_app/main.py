@@ -1,190 +1,150 @@
-from flask import Flask
-from flask import request
-import mysql.connector as mariadb
-import json
+from flask import Flask, render_template
+import mysql.connector
 
 app = Flask(__name__)
 
-@app.route('/')
-def get_homepage():
-    return 'HOME PAGE'
+cnx = mysql.connector.connect(user='cs340_vangemed', password='password',
+                                 host='classmysql.engr.oregonstate.edu',
+                                 database='cs340_vangemed')
+cursor = cnx.cursor()
 
-# User API endpoint
-#     /user/          returns all user ids with no extra data
-#     /user/<user_id> returns data for a specific user
-@app.route('/user/')
-def get_user():
-    user_id = request.args.get('id')
-    
-    if not user_id:
-        query = (
-            "SELECT users.user_id FROM users" 
-        )
-        
-        cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
-        cursor = cnx.cursor()
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        cnx.close()
-        
-        results = {'user_ids': []}
-        
-        for row in rows:
-            results['user_ids'].append(row[0])
-        
-        return results
-    
+@app.route('/completed')
+def get_completed(user_id):
     query = (
-        "SELECT users.user_id, users.birthdate, users.gender, users.username, thread_ratings.thread_rating_id, " "thread_ratings.thread_id, thread_ratings.rating, comments.comment_id, comments.thread_id, comments.content "
-        "FROM users "
-        "JOIN thread_ratings ON thread_ratings.user_id = users.user_id "
-        "JOIN comments ON comments.user_id = users.user_id "
-        "WHERE users.user_id = %s"
+        "SELECT w.name FROM workouts w " 
+        "JOIN completed c ON w.workout_id = c.workout_id "
+        "JOIN users u ON c.user_id = u.user_id "
+        "WHERE u.user_id =" + str(user_id) + "ORDER BY completed_id DESC;"
     )
-    
-    cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
-    cursor = cnx.cursor()
-    cursor.execute(query, (user_id,))
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/favorites')
+def get_favorites(user_id):
+    query = (
+        "SELECT w.name FROM workouts w " 
+        "JOIN favorites f ON w.workout_id = f.workout_id "
+        "JOIN users u ON f.user_id = u.user_id "
+        "WHERE u.user_id = " + str(user_id) + " ORDER BY favorite_id DESC;;"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/todo')
+def get_todo(user_id):
+    query = (
+        "SELECT w.name FROM workouts w " 
+        "JOIN todo td ON w.workout_id = td.workout_id "
+        "JOIN users u ON td.user_id = u.user_id "
+        "WHERE u.user_id = " + str(user_id) + " ORDER BY todo_id DESC;"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/user')
+def get_user(user_id):
+    query = (
+        "SELECT username, birthdate, gender FROM users WHERE user_id = " + str(user_id) + ";"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/workout')
+def get_workout(workout_id):
+    query = (
+        "SELECT * FROM workouts WHERE workout_id = " + str(workout_id) + ";"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/allworkouts')
+def get_all_workouts():
+    query = (
+        "SELECT * FROM workouts ORDER BY workout_id DESC;"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/forum')
+def get_forum():
+    query = (
+        "SELECT name, datetime FROM threads ORDER BY DATETIME DESC;"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+@app.route('/thread')
+def get_thread(thread_id):
+    query = (
+        "SELECT u.username AS 'username', t.name as 'thread_name', t.datetime, t.content FROM threads t "
+        "JOIN users u ON t.user_id = u.user_id "
+        "WHERE t.thread_id = " + thread_id+";"
+    )
+    cursor.execute(query)
     rows = cursor.fetchall()
     cnx.close()
-    
-    selected_fields = [
-        # user
-        'user_id',
-        'birthdate',
-        'gender',
-        'username',
-        # thread_ratings
-        'thread_rating_id',
-        'thread_id',
-        'rating',
-        # comments
-        'comment_id',
-        'thread_id',
-        'content'
-    ]
-    
-    results = {}
-    
-    for row in rows:
-        row_dict = dict(zip(selected_fields, row))
-        row_dict['birthdate'] = row_dict['birthdate'].strftime('%m/%d/%Y')
-        
-        if row_dict['user_id'] not in results:
-            user = {
-                'user_id': row_dict['user_id'],
-                'birthdate': row_dict['birthdate'],
-                'gender': row_dict['gender'],
-                'username': row_dict['username'],
-                'comments': {row_dict['comment_id']: row_dict['content']},
-                'thread_ratings': {row_dict['thread_id']: row_dict['rating']}
-            }    
-            results[row_dict['user_id']] = user
-        else:
-            if row_dict['comment_id'] not in results[row_dict['user_id']]['comments']:
-                results[row_dict['user_id']]['comments'][row_dict['comment_id']] = row_dict['content']
-            
-            if row_dict['thread_id'] not in results[row_dict['user_id']]['thread_ratings']:
-                results[row_dict['user_id']]['thread_ratings'][row_dict['thread_id']] = row_dict['rating']
-    
-    return results
 
-# Thread API endpoint
-#     /thread/            returns all thread ids with no extra data
-#     /thread/<thread_id> returns data for a specific thread
-@app.route('/thread/')
-def get_thread():
-    thread_id = request.args.get('id')
+    comments = get_thread_comments(thread_id)
+    pictures = get_pictures(thread_id)
+    videos = get_pictures(thread_id)
+    data = {"rows": rows, "comments": comments, "pictures": pictures, "videos": videos}
     
-    if not thread_id:
-        query = (
-            "SELECT threads.thread_id FROM threads" 
-        )
-        
-        cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
-        cursor = cnx.cursor()
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        cnx.close()
-        
-        results = {'thread_ids': []}
-        
-        for row in rows:
-            results['thread_ids'].append(row[0])
-        
-        return results
-    
+    return data
+
+def get_thread_comments(thread_id):
     query = (
-        "SELECT threads.thread_id, threads.name AS thread_name, threads.content AS thread_content, " "thread_ratings.thread_rating_id, thread_ratings.rating, comments.comment_id, "
-        "comments.content AS comment_content, videos.video_id, videos.name AS video_name, videos.link AS video_link, " "pictures.picture_id, pictures.name AS picture_name, pictures.link AS picture_link "
-        "FROM threads "
-        "JOIN thread_ratings ON thread_ratings.thread_id = threads.thread_id "
-        "JOIN comments ON comments.thread_id = threads.thread_id "
-        "JOIN videos ON videos.thread_id = threads.thread_id "
-        "JOIN pictures ON pictures.thread_id = threads.thread_id "
-        "WHERE threads.thread_id = %s"
+        "SELECT u.username AS 'username', c.datetime, c.content FROM comments c "
+        "JOIN users u ON c.user_id = u.user_id "
+        "JOIN threads t ON c.thread_id = t.thread_id "
+        "WHERE t.thread_id = " + thread_id+";"
     )
-    
-    cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
-    cursor = cnx.cursor()
-    cursor.execute(query, (thread_id,))
+    cursor.execute(query)
     rows = cursor.fetchall()
     cnx.close()
-    
-    selected_fields = [
-        # threads
-        'thread_id',
-        'thread_name',
-        'thread_content',
-        # thread_ratings
-        'thread_rating_id',
-        'rating',
-        # comments
-        'comment_id',
-        'comment_content',
-        # videos
-        'video_id',
-        'video_name',
-        'video_link',
-        # pictures
-        'picture_id',
-        'picture_name',
-        'picture_link',
-    ]
-    
-    results = {}
-    
-    for row in rows:
-        row_dict = dict(zip(selected_fields, row))
-        
-        if row_dict['thread_id'] not in results:
-            thread = {
-                'thread_id': row_dict['thread_id'],
-                'thread_name': row_dict['thread_name'],
-                'thread_content': row_dict['thread_content'],
-                'comments': {row_dict['comment_id']: row_dict['comment_content']},
-                'thread_ratings': {row_dict['thread_rating_id']: row_dict['rating']},
-                'videos': {row_dict['video_id']: {'name': row_dict['video_name'], 'link': row_dict['video_link']}},
-                'pictures': {row_dict['picture_id']: {'name': row_dict['picture_name'], 'link': row_dict['picture_link']}}
-            }    
-            results[row_dict['thread_id']] = thread
-        else:
-            if row_dict['comment_id'] not in results[row_dict['thread_id']]['comments']:
-                results[row_dict['thread_id']]['comments'][row_dict['comment_id']] = row_dict['comment_content']
-            
-            if row_dict['thread_rating_id'] not in results[row_dict['thread_id']]['thread_ratings']:
-                results[row_dict['thread_id']]['thread_ratings'][row_dict['thread_rating_id']] = row_dict['rating']
-            
-            if row_dict['video_id'] not in results[row_dict['thread_id']]['videos']:
-                results[row_dict['thread_id']]['videos'][row_dict['video_id']] = {
-                    'name': row_dict['video_name'],
-                    'link': row_dict['video_link']
-                }
-            
-            if row_dict['picture_id'] not in results[row_dict['thread_id']]['pictures']:
-                results[row_dict['thread_id']]['pictures'][row_dict['picture_id']] = {
-                    'name': row_dict['picture_name'],
-                    'link': row_dict['picture_link']
-                }
-    
-    return results
+
+    return rows
+
+def get_pictures(thread_id):
+    query = (
+        "SELECT link FROM pictures WHERE thread_id = " + thread_id+";"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+def get_videos(thread_id):
+    query = (
+        "SELECT link FROM videos WHERE thread_id = " + thread_id+";"
+    )
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cnx.close()
+
+    return data
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
