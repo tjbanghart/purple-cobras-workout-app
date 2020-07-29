@@ -65,6 +65,9 @@ CREATE TABLE threads (
     name VARCHAR(255) NOT NULL,
     datetime DATETIME NOT NULL,
     content TEXT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     PRIMARY KEY (thread_id)
 );
 CREATE TABLE thread_ratings (
@@ -147,10 +150,10 @@ VALUES
     (1, 1, 4),
     (2, 2, 7);
 INSERT INTO threads
-    (name, datetime, content)
+    (name, datetime, content, user_id)
 VALUES
-    ('Thread1', '2020-02-20 20:20:20', 'Thread 1 content.'),
-    ('Thread2', '2020-02-20 20:20:20', 'Thread 2 content.');
+    ('Thread1', '2020-02-20 20:20:20', 'Thread 1 content.', 1),
+    ('Thread2', '2020-02-20 20:20:20', 'Thread 2 content.', 2);
 INSERT INTO thread_ratings
     (user_id, thread_id, rating)
 VALUES
