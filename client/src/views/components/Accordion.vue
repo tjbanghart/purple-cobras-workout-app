@@ -6,29 +6,39 @@
         </b-card-header>
         <b-collapse :id="'accordion-' + index" accordion="my-accordion" role="tabpanel">
             <b-card-body>
-            <b-card-text>{{ obj.description }}</b-card-text>                              
+                <workout-details @complete="complete" :workout="obj"></workout-details>
             </b-card-body>
         </b-collapse>
         </b-card>
-    </div>
-
-    
+    </div>    
 </template>
 
 <script>
+import WorkoutDetails from './WorkoutDetails'
 export default {
     name: 'accordion',
+    components: {
+        WorkoutDetails
+    },
     props: [
         'obj',
         'index'
     ],
-    computed: {
-        isComplete() {
-            if(this.$route.name == 'profile'){
-                return true
-            }
+    data(){
+        return {
+            isComplete: false
+        }
+    },
+    mounted() {
+        if(this.$route.name == 'profile')
+        this.isComplete = true
+    },
+    methods: {
+        complete(){
+            return this.isComplete = true
         }
     }
+    
 }
 </script>
 
