@@ -22,24 +22,24 @@
                                 <base-input 
                                     alternative
                                     class="mb-3"
-                                    placeholder="Email"
-                                    addon-left-icon="ni ni-email-83"
+                                    placeholder="Username"
+                                    addon-left-icon="ni ni-circle-08"
                                     v-model="input.username"
                                     >
                                 </base-input>
-                                <base-input 
+                                <!-- <base-input 
                                     alternative
                                     type="password"
                                     placeholder="Password"
                                     addon-left-icon="ni ni-lock-circle-open"
                                     v-model="input.password"
                                     >
-                                </base-input>
-                                <base-checkbox
+                                </base-input> -->
+                                <!-- <base-checkbox
                                     v-model="input.remember"
                                     >
                                     Remember me
-                                </base-checkbox>
+                                </base-checkbox> -->
                                 <div class="text-center">
                                     <base-button @click="auth" type="primary" class="my-4">Sign In</base-button>
                                 </div>

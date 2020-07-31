@@ -88,7 +88,7 @@ export default {
             const safeAge = this.$moment(rawDate, "MM/DD/YYYY").fromNow(true) + ' old';
             return safeAge;
         },
-        fetchUser() {
+        fetchUser(){
            const url = 'http://localhost:5000/user/1';
            this.$http.get(url)
            .then((result) => {
@@ -113,7 +113,7 @@ export default {
             console.log(e)
             
         },
-        logOut() {
+        logOut(){
             this.$localStorage.authToken = false;
             this.$router.push('/');
         }
