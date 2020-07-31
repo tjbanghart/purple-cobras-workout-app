@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "babel-loader": "^8.1.0",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.16.0",
     "flatpickr": "^4.5.1",
