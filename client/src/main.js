@@ -19,10 +19,28 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import Argon from "./plugins/argon-kit";
+import BootstrapVue from 'bootstrap-vue'
 import './registerServiceWorker'
+import axios from 'axios'
+import moment from 'moment'
 
 Vue.config.productionTip = false;
 Vue.use(Argon);
+Vue.use(BootstrapVue);
+
+Vue.prototype.$http = axios;
+Vue.prototype.$moment = moment;
+
+Vue.prototype.$localStorage = new Vue({
+  data: { 
+     authToken: window.localStorage.getItem('authToken') 
+  },
+  watch:{ 
+     authToken(value){ window.localStorage.setItem('authToken', value) } 
+  }
+})
+
+
 new Vue({
   router,
   render: h => h(App)

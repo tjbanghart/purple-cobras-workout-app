@@ -104,7 +104,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #app ul > li {
     padding: 10px;
     margin: 0 0 30px 0

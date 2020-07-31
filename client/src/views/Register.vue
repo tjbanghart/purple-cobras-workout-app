@@ -23,24 +23,21 @@
                                             class="mb-3"
                                             placeholder="Name"
                                             addon-left-icon="fa fa-user-circle"
-                                            :value="input.name"
-                                            @input="val => { input.name = val }"
+                                            v-model="input.name"
                                             >
                                 </base-input>
-                                <base-input alternative
+                                <base-input alternatives
                                             class="mb-3"
                                             placeholder="Email"
                                             addon-left-icon="ni ni-email-83"
-                                            :value="input.email"
-                                            @input="val => { input.email = val }"
+                                            v-model="input.email"
                                             >
                                 </base-input>
                                 <base-input alternative
                                             type="password"
                                             placeholder="Password"
                                             addon-left-icon="ni ni-lock-circle-open"
-                                            :value="input.password"
-                                            @input="val => { input.password = val }"
+                                            v-model="input.password"
                                             >
                                 </base-input>
                                 <base-checkbox @input="val => { input.policy = val }">
