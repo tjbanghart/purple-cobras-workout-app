@@ -4,7 +4,7 @@ import json
 
 app = Flask(__name__)
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
+CORS(app)
 
 @app.route('/completed/<user_id>')
 def get_completed(user_id):
