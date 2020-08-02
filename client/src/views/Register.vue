@@ -23,31 +23,27 @@
                                             class="mb-3"
                                             placeholder="Name"
                                             addon-left-icon="fa fa-user-circle"
-                                            :value="input.name"
-                                            @input="val => { input.name = val }"
+                                            v-model="input.username"
                                             >
                                 </base-input>
-                                <base-input alternative
-                                            class="mb-3"
-                                            placeholder="Email"
-                                            addon-left-icon="ni ni-email-83"
-                                            :value="input.email"
-                                            @input="val => { input.email = val }"
-                                            >
+                                <base-input class="mb-3" addon-left-icon="ni ni-calendar-grid-58" >
+                                    <flat-picker slot-scope="{focus, blur}"
+                                                @on-open="focus"
+                                                @on-close="blur"
+                                                :config="{allowInput: true}"
+                                                class="form-control datepicker"
+                                                v-model="input.birthdate"
+                                                placeholder="Birthdate"
+                                                >
+                                    </flat-picker>
                                 </base-input>
-                                <base-input alternative
-                                            type="password"
-                                            placeholder="Password"
-                                            addon-left-icon="ni ni-lock-circle-open"
-                                            :value="input.password"
-                                            @input="val => { input.password = val }"
-                                            >
-                                </base-input>
-                                <base-checkbox @input="val => { input.policy = val }">
-                                    <span>I agree with the
-                                        <a href="#">Privacy Policy</a>
-                                    </span>
-                                </base-checkbox>
+                                <div class="form-group">
+                                    <select class="form-control" id="exampleFormControlSelect1" v-model="input.gender">
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                    </select>
+                                </div>
                                 <div class="text-center">
                                     <base-button type="primary" class="my-4" @click="log">Create account</base-button>
                                 </div>
@@ -60,23 +56,24 @@
     </section>
 </template>
 <script>
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
 export default {
+    components: {
+        flatPicker
+    },
     data() {
         return {
             input: {
-                name: "",
-                email: "",
-                password: "",
-                policy: false
+                username: "",
+                gender: "Male",
+                birthdate: ""
             }
         }
     },
     methods: {
-        log: function(val) {
-            console.log(this.input.name)
-            console.log(this.input.email)
-            console.log(this.input.password)
-            console.log(this.input.policy)
+        log: function() {
+           console.log(this.input)
         }
     }
 }

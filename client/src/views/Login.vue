@@ -19,28 +19,29 @@
                           class="border-0">
                         <template>
                             <form role="form">
-                                <base-input alternative
-                                            class="mb-3"
-                                            placeholder="Email"
-                                            addon-left-icon="ni ni-email-83"
-                                            :value="input.username" 
-                                            @input="val => { input.username = val }"
-                                            >
+                                <base-input 
+                                    alternative
+                                    class="mb-3"
+                                    placeholder="Username"
+                                    addon-left-icon="ni ni-circle-08"
+                                    v-model="input.username"
+                                    >
                                 </base-input>
-                                <base-input alternative
-                                            type="password"
-                                            placeholder="Password"
-                                            addon-left-icon="ni ni-lock-circle-open"
-                                            :value="input.password"
-                                            @input="val => { input.password = val }"
-                                            >
-                                </base-input>
-                                <base-checkbox
-                                    @input="val => { input.remember = val }">
+                                <!-- <base-input 
+                                    alternative
+                                    type="password"
+                                    placeholder="Password"
+                                    addon-left-icon="ni ni-lock-circle-open"
+                                    v-model="input.password"
+                                    >
+                                </base-input> -->
+                                <!-- <base-checkbox
+                                    v-model="input.remember"
+                                    >
                                     Remember me
-                                </base-checkbox>
+                                </base-checkbox> -->
                                 <div class="text-center">
-                                    <base-button @click="log" type="primary" class="my-4">Sign In</base-button>
+                                    <base-button @click="auth" type="primary" class="my-4">Sign In</base-button>
                                 </div>
                             </form>
                         </template>
@@ -74,11 +75,11 @@ export default {
         }
     },
     methods: {
-        log: function(val) {
-            console.log(this.input.username)
-            console.log(this.input.password)
-            console.log(this.input.remember)
-        }
+        auth: function(e) {
+            console.log(this.$localStorage)
+            this.$localStorage.authToken = true;
+            this.$router.push('/profile');
+        },
     }
 }
 </script>

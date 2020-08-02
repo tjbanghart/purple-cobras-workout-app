@@ -34,18 +34,18 @@
                                     in our community message boards.</p>
                             </div>
                         </a>
-                        <a href="#"
-                           class="media d-flex align-items-center">
-                            <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                        <!-- <a href="#"
+                           class="media d-flex align-items-center"> -->
+                            <!-- <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
                                 <i class="ni ni-trophy"></i>
-                            </div>
-                            <div class="media-body ml-3">
+                            </div> -->
+                            <!-- <div class="media-body ml-3">
                                 <h5 class="heading text-warning mb-md-1">Leaderboards</h5>
                                 <p class="description d-none d-md-inline-block mb-0">See how you stack up against
                                     other fitness addicts.
                                 </p>
-                            </div>
-                        </a>
+                            </div> -->
+                        <!-- </a> -->
                     </div>
                 </base-dropdown>
                 <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl">
@@ -53,7 +53,7 @@
                         <span class="nav-link-inner--text">Workout</span>
                     </a>
                     <div class="dropdown-menu-inner">
-                        <a href="#"
+                        <router-link to="/workouts"
                            class="media d-flex align-items-center">
                             <div class="icon icon-shape bg-gradient-primary rounded-circle text-white">
                                 <i class="ni ni-user-run"></i>
@@ -62,28 +62,35 @@
                                 <h6 class="heading text-primary mb-md-1">Daily Workout</h6>
                                 <p class="description d-none d-md-inline-block mb-0">Target each muscle group using with one of our daily workout routines. Curated just for you!</p>
                             </div>
-                        </a>
-                        <a href="#"
-                           class="media d-flex align-items-center">
-                            <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                        </router-link>
+                        <!-- <a href="#" -->
+                           <!-- class="media d-flex align-items-center"> -->
+                            <!-- <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
                                 <i class="fa fa-book"></i>
-                            </div>
-                            <div class="media-body ml-3">
+                            </div> -->
+                            <!-- <div class="media-body ml-3">
                                 <h5 class="heading text-warning mb-md-1">Past Workouts</h5>
                                 <p class="description d-none d-md-inline-block mb-0">See your previous workout history.</p>
-                            </div>
-                        </a>
+                            </div> -->
+                        <!-- </a> -->
                     </div>
                 </base-dropdown>
             </ul>
             <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-                
-                <li class="nav-item d-none d-lg-block ml-lg-4">
+                <li v-if="checkAuth" class="nav-item d-none d-lg-block ml-lg-4">
+                    <router-link to="/profile" class="btn btn-neutral btn-icon">
+                    <span class="btn-inner--icon">
+                    <i class="fa fa-user-circle mr-2" aria-hidden="true"></i>
+                    </span>
+                    <span class="nav-link-inner--text">Profile</span>
+                    </router-link>
+                </li>
+                <li v-else class="nav-item d-none d-lg-block ml-lg-4">
                     <router-link to="/login" class="btn btn-neutral btn-icon">
-                <span class="btn-inner--icon">
-                  <i class="fa fa-user-circle mr-2" aria-hidden="true"></i>
-                </span>
-                        <span class="nav-link-inner--text">Log in/Sign Up</span>
+                    <span class="btn-inner--icon">
+                    <i class="fa fa-user-circle mr-2" aria-hidden="true"></i>
+                    </span>
+                    <span class="nav-link-inner--text">Log in/Sign Up</span>
                     </router-link>
                 </li>
             </ul>
@@ -100,6 +107,12 @@ export default {
     BaseNav,
     CloseButton,
     BaseDropdown
+  },
+  computed: {
+      checkAuth(){
+        //$localStorage 
+        return this.$localStorage.authToken
+      }
   }
 };
 </script>
