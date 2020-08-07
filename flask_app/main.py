@@ -7,51 +7,34 @@ app = Flask(__name__)
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 CORS(app)
 
-@app.route('/completed/<user_id>')
-def get_completed(user_id):
+
+def get_workout_list(user_id, workout_list):
     cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
     query = (
         "SELECT w.name FROM workouts w " 
-        "JOIN completed c ON w.workout_id = c.workout_id "
-        "JOIN users u ON c.user_id = u.user_id "
+        "JOIN " + workout_list + " x ON w.workout_id = x.workout_id "
+        "JOIN users u ON x.user_id = u.user_id "
         "WHERE u.user_id = " + str(user_id) + " ORDER BY completed_id DESC;"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
     data = cursor.fetchall()
     cnx.close()
+    return data
+
+@app.route('/completed/<user_id>')
+def get_completed(user_id):
+    data = get_workout_list(user_id, "completed")
     return json.dumps(data)
 
 @app.route('/favorites/<user_id>')
 def get_favorites(user_id):
-    cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
-    query = (
-        "SELECT w.name FROM workouts w " 
-        "JOIN favorites f ON w.workout_id = f.workout_id "
-        "JOIN users u ON f.user_id = u.user_id "
-        "WHERE u.user_id = " + str(user_id) + " ORDER BY favorite_id DESC;;"
-    )
-    cursor = cnx.cursor(dictionary=True)
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cnx.close()
-
+    data = get_workout_list(user_id, "favorites")
     return json.dumps(data)
 
 @app.route('/todo/<user_id>')
 def get_todo(user_id):
-    cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
-    query = (
-        "SELECT w.name FROM workouts w " 
-        "JOIN todo td ON w.workout_id = td.workout_id "
-        "JOIN users u ON td.user_id = u.user_id "
-        "WHERE u.user_id = " + str(user_id) + " ORDER BY todo_id DESC;"
-    )
-    cursor = cnx.cursor(dictionary=True)
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cnx.close()
-
+    data = get_workout_list(user_id, "todo")
     return json.dumps(data)
 
 @app.route('/user/<user_id>')
@@ -133,7 +116,7 @@ def get_thread(thread_id):
     query = (
         "SELECT u.username AS 'username', t.name as 'thread_name', t.datetime, t.content FROM threads t "
         "JOIN users u ON t.user_id = u.user_id "
-        "WHERE t.thread_id = " + thread_id+";"
+        "WHERE t.thread_id = " + thread_id + ";"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
@@ -156,7 +139,7 @@ def get_thread_comments(thread_id):
         "SELECT u.username AS 'username', c.datetime, c.content FROM comments c "
         "JOIN users u ON c.user_id = u.user_id "
         "JOIN threads t ON c.thread_id = t.thread_id "
-        "WHERE t.thread_id = " + thread_id+";"
+        "WHERE t.thread_id = " + thread_id + ";"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
@@ -170,7 +153,7 @@ def get_thread_comments(thread_id):
 def get_pictures(thread_id):
     cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
     query = (
-        "SELECT link FROM pictures WHERE thread_id = " + thread_id+";"
+        "SELECT link FROM pictures WHERE thread_id = " + thread_id + ";"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
@@ -182,7 +165,7 @@ def get_pictures(thread_id):
 def get_videos(thread_id):
     cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
     query = (
-        "SELECT link FROM videos WHERE thread_id = " + thread_id+";"
+        "SELECT link FROM videos WHERE thread_id = " + thread_id + ";"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
@@ -196,7 +179,7 @@ def get_thread_rating(thread_id):
     query = (
         "SELECT AVG(tr.rating) AS rating FROM thread_ratings tr "
         "JOIN threads t ON tr.thread_id = t.thread_id "
-        "WHERE tr.thread_id = " + str(thread_id) +";"
+        "WHERE tr.thread_id = " + str(thread_id) + ";"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
