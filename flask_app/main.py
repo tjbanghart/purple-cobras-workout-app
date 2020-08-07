@@ -8,13 +8,13 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 CORS(app)
 
 
-def get_workout_list(user_id, workout_list):
+def get_workout_list(user_id, workout_list, table_id):
     cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
     query = (
         "SELECT w.name FROM workouts w " 
         "JOIN " + workout_list + " x ON w.workout_id = x.workout_id "
         "JOIN users u ON x.user_id = u.user_id "
-        "WHERE u.user_id = " + str(user_id) + " ORDER BY completed_id DESC;"
+        "WHERE u.user_id = " + str(user_id) + " ORDER BY " + table_id + " DESC;"
     )
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
@@ -24,17 +24,17 @@ def get_workout_list(user_id, workout_list):
 
 @app.route('/completed/<user_id>')
 def get_completed(user_id):
-    data = get_workout_list(user_id, "completed")
+    data = get_workout_list(user_id, "completed", "completed_id")
     return json.dumps(data)
 
 @app.route('/favorites/<user_id>')
 def get_favorites(user_id):
-    data = get_workout_list(user_id, "favorites")
+    data = get_workout_list(user_id, "favorites", "favorite_id")
     return json.dumps(data)
 
 @app.route('/todo/<user_id>')
 def get_todo(user_id):
-    data = get_workout_list(user_id, "todo")
+    data = get_workout_list(user_id, "todo", "todo_id")
     return json.dumps(data)
 
 @app.route('/user/<user_id>')
