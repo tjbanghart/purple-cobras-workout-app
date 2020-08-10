@@ -1,7 +1,22 @@
-import categories from './data/categories'
+//import categories from './data/categories'
 import topicsInCategory from './data/topicsInCategory'
 import topic from './data/topic'
 import userData from './data/userData'
+
+//https://www.w3schools.com/nodejs/nodejs_mongodb_query.asp
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("purpleCobraForum");
+  var categories = dbo.collection("category").find({}).toArray(function(err, result) {
+    if (err) throw err;
+    console.log(result);
+    db.close();
+  });
+});
+
 
 const fetch = (mockData, time = 100) => {
   return new Promise((resolve) => {
@@ -17,7 +32,7 @@ export default {
   },
 
   getCategory (categorySlug) {
-    const category = categories.find(category => category.slug === categorySlug)
+    const category = categories
     if (!category) {
       throw Error('Category not found')
     }
