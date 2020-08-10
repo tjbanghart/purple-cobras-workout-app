@@ -1,0 +1,69 @@
+//List the body categories
+//Also create a category for read and unread posts
+[
+    {
+        "_id": 1,
+        "title": "Arms",
+        "slug": "Arms",
+        "description": "",
+        "color": "FF0000"
+    },
+    {
+        "_id": 2,
+        "title": "Abs",
+        "slug": "Abs",
+        "description": "",
+        "color": "#FFC433"
+    },
+    {
+        "_id": 3,
+        "title": "Shoulders",
+        "slug": "Shoulders",
+        "description": "",
+        "color": "#EDFF33"
+    },
+    {
+        "_id": 4,
+        "title": "Chest",
+        "slug": "Chest",
+        "description": "",
+        "color": "#0DFF00"
+    },
+    {
+        "_id": 5,
+        "title": "Core",
+        "slug": "Core",
+        "description": "",
+        "color": "33FFFD"
+    },
+    {
+        "_id": 6,
+        "title": "Back",
+        "slug": "Back",
+        "description": "",
+        "color": "#ee7799"
+    },
+    {
+        "_id": 7,
+        "title": "Legs",
+        "slug": "Legs",
+        "description": "",
+        "color": "#77dd88"
+    },
+    {
+        "_id": 8,
+        "title": "Unread",
+        "slug": "Unread",
+        "description": "",
+        "color": "#00000"
+    },
+    {
+        "_id": 9,
+        "title": "Read",
+        "slug": "Read",
+        "description": "",
+        "color": "#FFFFFF"
+    }
+
+
+]
