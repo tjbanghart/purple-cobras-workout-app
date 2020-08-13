@@ -8,7 +8,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 CORS(app)
 
 
-def get_query(query):
+def make_query(query):
     cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(query)
@@ -23,36 +23,35 @@ def insert_query(query, values=None):
     cnx.commit()
     cnx.close()
 
-def get_list(user_id, list, id_name):
+def get_workout_list(user_id, workout_list, table_id):
     query = (
         "SELECT w.name FROM workouts w " 
-        "JOIN " + list + " x ON w.workout_id = x.workout_id "
+        "JOIN " + workout_list + " x ON w.workout_id = x.workout_id "
         "JOIN users u ON x.user_id = u.user_id "
-        "WHERE u.user_id = " + str(user_id) + " ORDER BY " + id_name + " DESC;"
+        "WHERE u.user_id = " + str(user_id) + " ORDER BY " + table_id + " DESC;"
     )
-    data = get_query(query)
+    data = make_query(query)
     return data
 
 def add_to_list(user_id, workout_id, list):
     query = (
-        "INSERT INTO %s (`user_id`, `workout_id`) VALUES (%s, %s);"
+        "INSERT INTO " + list + " (`user_id`, `workout_id`) VALUES (" + user_id + ", " + workout_id + ");"
     )
-    values = (user_id, workout_id, list)
-    insert_query(query, values)
+    insert_query(query)
 
 @app.route('/completed/<user_id>')
 def get_completed(user_id):
-    data = get_list(user_id, "completed", "completed_id")
+    data = get_workout_list(user_id, "completed", "completed_id")
     return json.dumps(data)
 
 @app.route('/favorites/<user_id>')
 def get_favorites(user_id):
-    data = get_list(user_id, "favorites", "favorite_id")
+    data = get_workout_list(user_id, "favorites", "favorite_id")
     return json.dumps(data)
 
 @app.route('/todo/<user_id>')
 def get_todo(user_id):
-    data = get_list(user_id, "todo", "todo_id")
+    data = get_workout_list(user_id, "todo", "todo_id")
     return json.dumps(data)
 
 @app.route('/user/<user_id>')
@@ -60,39 +59,18 @@ def get_user(user_id):
     query = (
         "SELECT username, birthdate, gender FROM users WHERE user_id = " + str(user_id) + ";"
     )
-    data = get_query(query)
+    data = make_query(query)
     for i in data:
         i['birthdate'] = i['birthdate'].strftime('%m/%d/%Y')
 
     return json.dumps(data)
 
-@app.route('/add_user', methods=["GET", "POST"])
-def add_user():
-    if request.method == "GET":
-        return render_template("add_user.html")
-    data = request.data
-    query = (
-        "INSERT INTO users (`birthdate`, `gender`, `username`) VALUES (%s, %s, %s);"
-    )
-    birthdate = data["birthdate"]
-    gender = data["gender"]
-    username = data["username"]
-    values = (birthdate, gender, username)
-    insert_query(query, values)
-    return json.dumps(data)
-
-
-@app.route('/workout/<workout_id>', methods=["GET", "POST"])
+@app.route('/workout/<workout_id>')
 def get_workout(workout_id):
-    if request.method == "POST":
-        data = request.data
-        user_id = data["user_id"]
-        list = data["list"]
-        add_to_list(user_id, workout_id, list)
     query = (
         "SELECT * FROM workouts WHERE workout_id = " + str(workout_id) + ";"
     )
-    data = get_query(query)
+    data = make_query(query)
     data[0]['rating'] = get_workout_rating(workout_id)
     return json.dumps(data)
 
@@ -101,7 +79,7 @@ def get_all_workouts():
     query = (
         "SELECT * FROM workouts ORDER BY workout_id DESC;"
     )
-    data = get_query(query)
+    data = make_query(query)
     for workout in data:
         workout['rating'] = get_workout_rating(workout['workout_id'])
     return json.dumps(data)
@@ -112,7 +90,7 @@ def get_workout_rating(workout_id):
         "JOIN workouts w ON wr.workout_id = w.workout_id "
         "WHERE wr.workout_id = " + str(workout_id) +";"
     )
-    data = get_query(query)
+    data = make_query(query)
     return str(data[0]['rating'])
 
 @app.route('/forum')
@@ -120,7 +98,7 @@ def get_forum():
     query = (
         "SELECT thread_id, name, datetime FROM threads ORDER BY DATETIME DESC;"
     )
-    data = get_query(query)
+    data = make_query(query)
     for i in data:
         i['datetime'] = i['datetime'].strftime('%m/%d/%Y')
         i['rating'] = get_thread_rating(i['thread_id'])
@@ -130,17 +108,17 @@ def get_forum():
 @app.route('/thread/<thread_id>')
 def get_thread(thread_id):
     query = (
-        "SELECT u.username, t.name as 'thread_name', t.datetime, t.content FROM threads t "
+        "SELECT u.username AS 'username', t.name as 'thread_name', t.datetime, t.content FROM threads t "
         "JOIN users u ON t.user_id = u.user_id "
-        "WHERE t.thread_id = " + thread_id+";"
+        "WHERE t.thread_id = " + thread_id + ";"
     )
-    thread_info = get_query(query)
+    thread_info = make_query(query)
     for i in thread_info:
         i['datetime'] = i['datetime'].strftime('%m/%d/%Y')
 
     comments = get_thread_comments(thread_id)
-    pictures = get_pictures(thread_id)
-    videos = get_pictures(thread_id)
+    pictures = get_media(thread_id, 'pictures')
+    videos = get_media(thread_id, 'videos')
     rating = get_thread_rating(thread_id)
     data = [{"thread": thread_info, "comments": comments, "pictures": pictures, "videos": videos, "rating": rating}]
 
@@ -148,29 +126,22 @@ def get_thread(thread_id):
 
 def get_thread_comments(thread_id):
     query = (
-        "SELECT u.username, c.datetime, c.content FROM comments c "
+        "SELECT u.username AS 'username', c.datetime, c.content FROM comments c "
         "JOIN users u ON c.user_id = u.user_id "
         "JOIN threads t ON c.thread_id = t.thread_id "
-        "WHERE t.thread_id = " + thread_id+";"
+        "WHERE t.thread_id = " + thread_id + ";"
     )
-    data = get_query(query)
+    data = make_query(query)
     for i in data:
         i['datetime'] = i['datetime'].strftime('%m/%d/%Y')
 
     return data
 
-def get_pictures(thread_id):
+def get_media(thread_id, media_type):
     query = (
-        "SELECT link FROM pictures WHERE thread_id = " + thread_id+";"
+        "SELECT link FROM " + media_type + " WHERE thread_id = " + thread_id + ";"
     )
-    data = get_query(query)
-    return data
-
-def get_videos(thread_id):
-    query = (
-        "SELECT link FROM videos WHERE thread_id = " + thread_id+";"
-    )
-    data = get_query(query)
+    data = make_query(query)
     return data
 
 def get_thread_rating(thread_id):
@@ -179,7 +150,7 @@ def get_thread_rating(thread_id):
         "JOIN threads t ON tr.thread_id = t.thread_id "
         "WHERE tr.thread_id = " + str(thread_id) + ";"
     )
-    data = get_query(query)
+    data = make_query(query)
     return str(data[0]['rating'])
 
 @app.route('/add_thread', methods=["GET", "POST"])
@@ -252,8 +223,6 @@ def update_user():
     user_id = data["user_id"]
     values = (birthdate, gender, username, user_id)
     insert_query(query, values)
-    return json.dumps(data)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
