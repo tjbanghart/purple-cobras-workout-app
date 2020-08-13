@@ -23,7 +23,6 @@ def insert_query(query, values=None):
     cnx.commit()
     cnx.close()
 
-
 def get_list(user_id, list, id_name):
     query = (
         "SELECT w.name FROM workouts w " 
@@ -36,9 +35,10 @@ def get_list(user_id, list, id_name):
 
 def add_to_list(user_id, workout_id, list):
     query = (
-        "INSERT INTO " + list + " (`user_id`, `workout_id`) VALUES (" + user_id+ ", " + workout_id + ");"
+        "INSERT INTO %s (`user_id`, `workout_id`) VALUES (%s, %s);"
     )
-    insert_query(query)
+    values = (user_id, workout_id, list)
+    insert_query(query, values)
 
 @app.route('/completed/<user_id>')
 def get_completed(user_id):
@@ -82,8 +82,13 @@ def add_user():
     return json.dumps(data)
 
 
-@app.route('/workout/<workout_id>')
+@app.route('/workout/<workout_id>', methods=["GET", "POST"])
 def get_workout(workout_id):
+    if request.method == "POST":
+        data = request.data
+        user_id = data["user_id"]
+        list = data["list"]
+        add_to_list(user_id, workout_id, list)
     query = (
         "SELECT * FROM workouts WHERE workout_id = " + str(workout_id) + ";"
     )
@@ -181,7 +186,7 @@ def get_thread_rating(thread_id):
 def add_thread():
     if request.method == "GET":
         return render_template("add_thread.html")
-    data = request.form.to_dict()
+    data = request.data
     query = (
         "INSERT INTO threads (`name`, `datetime`, `content`, `user_id`) VALUES (%s, %s, %s, %s);"
     )
