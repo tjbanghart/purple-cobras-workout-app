@@ -1,7 +1,7 @@
 -- create tables
 CREATE TABLE workouts (
     workout_id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     beg_reps INT NOT NULL,
     mod_reps INT NOT NULL,
     adv_reps INT NOT NULL,
@@ -15,8 +15,8 @@ CREATE TABLE workouts (
 CREATE TABLE users (
     user_id INT NOT NULL AUTO_INCREMENT,
     birthdate DATETIME NOT NULL,
-    gender VARCHAR(255) NOT NULL,
-    username VARCHAR(255) UNIQUE NOT NULL,
+    gender VARCHAR(50) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     PRIMARY KEY (user_id)
 );
 CREATE TABLE favorites (
@@ -66,7 +66,7 @@ CREATE TABLE workout_ratings (
 );
 CREATE TABLE threads (
     thread_id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     datetime DATETIME NOT NULL,
     content TEXT NOT NULL,
     user_id INT NOT NULL,
@@ -101,8 +101,8 @@ CREATE TABLE comments (
 CREATE TABLE videos (
     video_id INT NOT NULL AUTO_INCREMENT,
     thread_id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    link VARCHAR(255) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    link VARCHAR(50) NOT NULL,
     PRIMARY KEY (video_id),
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
         ON DELETE CASCADE
@@ -110,8 +110,8 @@ CREATE TABLE videos (
 CREATE TABLE pictures (
     picture_id INT NOT NULL AUTO_INCREMENT,
     thread_id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    link VARCHAR(255) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    link VARCHAR(50) NOT NULL,
     PRIMARY KEY (picture_id),
     FOREIGN KEY (thread_id) REFERENCES threads(thread_id)
         ON DELETE CASCADE

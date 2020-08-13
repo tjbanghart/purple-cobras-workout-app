@@ -104,8 +104,8 @@ def get_thread(thread_id):
         i['datetime'] = i['datetime'].strftime('%m/%d/%Y')
 
     comments = get_thread_comments(thread_id)
-    pictures = get_pictures(thread_id)
-    videos = get_pictures(thread_id)
+    pictures = get_media(thread_id, 'pictures')
+    videos = get_media(thread_id, 'videos')
     rating = get_thread_rating(thread_id)
     data = [{"thread": thread_info, "comments": comments, "pictures": pictures, "videos": videos, "rating": rating}]
 
@@ -124,16 +124,11 @@ def get_thread_comments(thread_id):
 
     return data
 
-def get_pictures(thread_id):
-    query = (
-        "SELECT link FROM pictures WHERE thread_id = " + thread_id + ";"
-    )
-    data = make_query(query)
-    return data
 
-def get_videos(thread_id):
+def get_media(thread_id, media_type):
+    cnx = mariadb.connect(user='vagrant', password='password', database='cobras')
     query = (
-        "SELECT link FROM videos WHERE thread_id = " + thread_id + ";"
+        "SELECT link FROM " + media_type + " WHERE thread_id = " + thread_id + ";"
     )
     data = make_query(query)
     return data
@@ -149,4 +144,3 @@ def get_thread_rating(thread_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
