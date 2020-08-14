@@ -89,7 +89,8 @@ export default {
             return safeAge;
         },
         fetchUser(){
-           const url = 'http://localhost:5000/user/1';
+           //const url = `http://localhost:5000/user/${this.$localStorage.username}`;
+           const url = `http://localhost:5000/user/User`;
            this.$http.get(url)
            .then((result) => {
                this.user = result.data[0]
@@ -99,7 +100,7 @@ export default {
             });
         },
         fetchFavorites(){
-            const url = 'http://localhost:5000/favorites/1';
+            const url = `http://localhost:5000/favorites/1`;
             this.$http.get(url)
             .then((result) => {
                 console.log(result.data)
@@ -110,7 +111,16 @@ export default {
             console.log("AHHH");
         },
         editUser(e){
-            console.log(e)
+            const url = `http://localhost:5000/update_user`
+            const updateUser = Object.assign({ user_id: this.$localStorage.user_id }, this.user)
+            this.$http.patch(url, updateUser)
+            .then((response) => {
+                alert('User updated')
+                this.user = updateUser
+            })
+            .catch((err) => {
+                console.log(err)
+            })
             
         },
         logOut(){

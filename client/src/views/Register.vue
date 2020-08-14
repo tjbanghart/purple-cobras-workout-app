@@ -45,7 +45,7 @@
                                     </select>
                                 </div>
                                 <div class="text-center">
-                                    <base-button type="primary" class="my-4" @click="log">Create account</base-button>
+                                    <base-button type="primary" class="my-4" @click="createUser">Create account</base-button>
                                 </div>
                             </form>
                         </template>
@@ -72,8 +72,20 @@ export default {
         }
     },
     methods: {
-        log: function() {
-           console.log(this.input)
+        createUser: function() {
+            const url = 'http://localhost:5000/add_user';
+            this.$http.post(url, this.input)
+            .then((response) => {
+                console.log(response);
+                alert('New User Added!')
+            })
+            .then(() => {
+                this.$router.push('/')
+                
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         }
     }
 }

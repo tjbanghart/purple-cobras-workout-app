@@ -76,9 +76,20 @@ export default {
     },
     methods: {
         auth: function(e) {
-            console.log(this.$localStorage)
-            this.$localStorage.authToken = true;
-            this.$router.push('/profile');
+            const url = `http://localhost:5000/user/${this.input.username}`
+            this.$http.get(url) 
+            .then((results) => {
+                console.log(results.data)
+                if(results.data.length < 1) {
+                    alert('I don\'t know that user. Maybe register that name?')
+                    this.$router.push('/register');
+                    return;
+                }
+                this.$localStorage.authToken = true;
+                this.$localStorage.username = results.data[0].username
+                this.$localStorage.user_id = results.data[0].user_id
+                this.$router.push('/profile');
+            })
         },
     }
 }

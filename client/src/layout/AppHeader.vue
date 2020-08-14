@@ -77,7 +77,7 @@
                 </base-dropdown>
             </ul>
             <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-                <li v-if="checkAuth" class="nav-item d-none d-lg-block ml-lg-4">
+                <li v-if="checkAuth() != 'false'" class="nav-item d-none d-lg-block ml-lg-4">
                     <router-link to="/profile" class="btn btn-neutral btn-icon">
                     <span class="btn-inner--icon">
                     <i class="fa fa-user-circle mr-2" aria-hidden="true"></i>
@@ -108,9 +108,10 @@ export default {
     CloseButton,
     BaseDropdown
   },
-  computed: {
+  methods: {
       checkAuth(){
         //$localStorage 
+        console.log(this.$localStorage.authToken)
         return this.$localStorage.authToken
       }
   }
