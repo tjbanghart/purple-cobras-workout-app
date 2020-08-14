@@ -11,7 +11,6 @@ Instructions for setting up the database and running the flask app on Windows 10
 * Run `sudo apt-get install -y python3-venv`
 * Run `git clone https://github.com/tjbanghart/purple-cobras-workout-app.git`
 * Run `cd purple-cobras-workout-app`
-* Run `git checkout msg_board_endpoints`
 * Run `cd flask_app`
 
 Time to create and source the database.
