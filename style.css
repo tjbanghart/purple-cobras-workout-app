@@ -1,0 +1,133 @@
+body {
+	background-color: purple;
+}
+
+
+#logo {
+	height: 35px; 	
+}
+
+tr:nth-child(2n){
+	background: #f7f7f7;
+}
+
+.btn {
+	text-transform: uppercase;
+	font-size: 15px;
+	padding-right: 60px;
+	padding-left: 60px
+
+}
+
+.panel-heading {
+	text-align: center;
+}
+
+#addButtons {
+	width: 500px;
+	margin: 0 auto;
+	height: 150px
+}
+
+#addButtons p {
+	text-align: center;
+	font-weight: bold;
+}
+
+#userStats {
+	text-align: center;
+	height: 150px;
+}
+
+#userStats p {
+	font-weight: bold;
+}
+
+#bcButtons {
+	padding-top: 20px;
+}
+
+#searchW {
+	text-align: center;
+}
+
+#searchW ul {
+	list-style-type: none;
+}
+
+#bcButtons2 {
+	padding-bottom: 15px;
+}
+
+#successMessage {
+	text-align: center;
+}
+
+#successMessage h3 {
+	color: green;
+}
+
+.delete {
+	color: black;
+}
+
+.delete:hover {
+	background: #e74c3c;
+}
+
+#createW {
+	text-align: center;
+	height: 250px;
+}
+
+#createW h4 {
+	font-weight: bold;
+}
+
+#createButtons {
+	padding-top: 20px;
+}
+
+.selections {
+	height: 25px;
+}
+
+
+
+#btnGoBack {
+	padding-right: 10px;
+}
+
+#lapPullDown {
+	height: 50px;
+}
+
+#backExercise {
+	text-align: center;
+}
+
+#btnGoBackWorkouts {
+	padding-bottom: 30px;
+	padding-top: 30px
+}
+
+#inputText {
+	height: 50px;
+}
+
+#div23 {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+#rowsPict {
+	height: 200px;
+}
+
+#dfliesPict {
+	height: 200px
+}
+
+#cbrPict {
+	height: 200px;
+}
